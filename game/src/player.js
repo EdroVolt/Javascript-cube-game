@@ -7,6 +7,7 @@ const obstacleSpawnInterval = 3.5;
 class Player extends GameObject {
 	constructor() {
 		super();
+		this.gameOver = false
 	}
 
 	init() {
@@ -28,6 +29,8 @@ class Player extends GameObject {
 	}
 
 	update(deltaTime) {
+		if (this.gameOver) return;
+
 		// Update the players physics:
 		this.velocity.y += gravity.y * deltaTime;
 		this.capVelocity(20);
@@ -47,12 +50,17 @@ class Player extends GameObject {
 	}
 
 	endGame() {
-		// This is used to identify and remove barrier objects from the scene
-		destroyMatchingObjects((gobj) => gobj.location !== undefined);
+		const delayBeforeEndGame = 1000;
+		this.gameOver = true;
 
-		mainMenu.visible = true;
-		destroyObject(this);
-		resetScore();
+		setTimeout(() => {
+			// This is used to identify and remove barrier objects from the scene
+			destroyMatchingObjects((gobj) => gobj.location !== undefined);
+
+			mainMenu.visible = true;
+			destroyObject(this);
+			resetScore();
+		}, delayBeforeEndGame);
 	}
 
 	testGameOver() {
